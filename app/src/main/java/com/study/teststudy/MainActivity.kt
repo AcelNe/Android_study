@@ -16,10 +16,11 @@ class MainActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         binding.btnRemember.setOnClickListener {
-            CameraActivity()
+            val intent=Intent(this, CameraActivity::class.java)
+            startActivity(intent)
         }
         binding.btnMemory.setOnClickListener {
-            val intent=Intent(this, ActivityListBinding::class.java)
+            val intent=Intent(this, ListActivity::class.java)
             startActivity(intent)
         }
     }

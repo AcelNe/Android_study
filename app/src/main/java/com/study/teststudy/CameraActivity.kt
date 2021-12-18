@@ -7,15 +7,16 @@ import android.graphics.Bitmap
 import android.graphics.ImageDecoder
 import android.net.Uri
 import android.os.Build
+import android.os.Bundle
 import android.provider.MediaStore
+import android.util.Log
 import android.widget.Toast
-import androidx.appcompat.app.AppCompatActivity
-import com.study.teststudy.databinding.ActivityMainBinding
+import androidx.room.Room
 import com.study.teststudy.databinding.ActivityPageBinding
 import java.lang.Exception
 import java.text.SimpleDateFormat
 
-class CameraActivity : BaseActivity {
+class CameraActivity : BaseActivity() {
     val PERM_STORAGE=9
     val PERM_CAMERA=10
     val REQ_CAMERA=11
@@ -23,12 +24,38 @@ class CameraActivity : BaseActivity {
     //원본 이미지 주소 저장할 변수
     var realUri: Uri? = null
 
-    val binding by lazy { ActivityPageBinding.inflate(layoutInflater) }
+    val binding by lazy {
+        ActivityPageBinding.inflate(layoutInflater)
+    }
+    lateinit var helper:RoomHelper//page저장할때 사용
 
-    constructor(){
+    override fun onCreate(savedInstanceState: Bundle?) {//app 실행하는 main함수
+        super.onCreate(savedInstanceState)
         setContentView(binding.root)
+
         //공용저장소 권한 확인
         requirePermissions(arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE),PERM_STORAGE)
+
+        helper= Room.databaseBuilder(this,RoomHelper::class.java,"diary").allowMainThreadQueries().build()
+
+        binding.btnList.setOnClickListener {
+            val intent=Intent(this, ListActivity::class.java)
+            startActivity(intent)
+        }
+        binding.btnRemember.setOnClickListener {
+            Log.d("rememberBTN", "btn_remember run()")
+            //insert 기능 필요
+//            val img:Uri=
+            val feeling=binding.tvFeeling.toString()
+            if(feeling.isNotEmpty()){
+                val date=System.currentTimeMillis()
+//                helper.pageDAO().insetr(Page(img,date,feeling))
+                
+                //list로 이동
+                val intent=Intent(this, ListActivity::class.java)
+                startActivity(intent)
+            }
+        }
     }
 
     //카메라 권한 확인->승인 상태 카메라 호출
